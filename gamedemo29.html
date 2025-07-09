@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Chappal VS AK-47</title>
+<style>
+  :root {
+    --color-bg-light: #eee;
+    --color-bg-dark: #121212;
+    --color-text-light: black;
+    --color-text-dark: #eee;
+    --color-menu-bg-light: #fff;
+    --color-menu-bg-dark: #222;
+    --color-primary: #007bff;
+  }
+
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    user-select: none;
+    background: var(--color-bg-light);
+    color: var(--color-text-light);
+    font-family: Impact, Charcoal, sans-serif;
+    transition: background-color 0.4s, color 0.4s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    box-sizing: border-box;
+    padding: 20px 0 40px;
+    position: relative;
+  }
+  body.dark {
+    background: var(--color-bg-dark);
+    color: var(--color-text-dark);
+  }
+
+  #mainMenu, #gameContainer {
+    width: 800px;
+    max-width: 100vw;
+    border-radius: 12px;
+    background: var(--color-menu-bg-light);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    transition: background-color 0.4s, box-shadow 0.4s;
+    position: relative;
+    box-sizing: border-box;
+  }
+  body.dark #mainMenu, body.dark #gameContainer {
+    background: var(--color-menu-bg-dark);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+  }
+
+  #mainMenu {
+    padding: 30px 40px 60px;
+    margin-bottom: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #titleRow {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 40px;
+  }
+  #mainMenu h1 {
+    font-size: 48px;
+    font-weight: bold;
+    user-select: none;
+    margin: 0;
+  }
+  #dropdownContainer {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    user-select: none;
+    font-family: Impact, Charcoal, sans-serif;
+    z-index: 50;
+  }
+
+  #mainMenu button.mode-button {
+    display: block;
+    width: 220px;
+    margin: 10px auto;
+    padding: 14px;
+    font-size: 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgb(0 123 255 / 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.3s;
+    font-family: Impact, Charcoal, sans-serif;
+    color: black;
+    background-color: #a8d5a2;
+    user-select: none;
+  }
+  #mainMenu button.mode-button:hover:not(.hard-confirmed) {
+    filter: brightness(90%);
+    animation: popout 0.2s forwards;
+    box-shadow: 0 8px 14px rgb(0 123 255 / 0.6);
+  }
+  #mainMenu button[data-mode="easy"] { background-color: #a8d5a2; color: black; }
+  #mainMenu button[data-mode="medium"] { background-color: #f7ea61; color: black; }
+  #mainMenu button[data-mode="hard"] { background-color: #f44336; color: white; }
+  #mainMenu button[data-mode="survival"] { background-color: #87ceeb; color: black; }
+  body.dark #mainMenu button[data-mode="easy"] { color: black; }
+  body.dark #mainMenu button[data-mode="medium"] { color: black; }
+  body.dark #mainMenu button[data-mode="hard"] { color: white; }
+  body.dark #mainMenu button[data-mode="survival"] { color: black; }
+
+
+  @keyframes popout {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 4px 6px rgb(0 123 255 / 0.4);
+    }
+    50% {
+      transform: scale(1.1);
+      box-shadow: 0 10px 18px rgb(0 123 255 / 0.7);
+    }
+    100% {
+      transform: scale(1.05);
+      box-shadow: 0 8px 14px rgb(0 123 255 / 0.6);
+    }
+  }
+
+  #footerText {
+    width: 800px;
+    max-width: 100vw;
+    margin: 0 auto 60px;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    user-select: none;
+    font-family: Impact, Charcoal, sans-serif;
+    transition: color 0.4s;
+  }
+  body.dark #footerText {
+    color: #aaa;
+  }
+
+  #dropdownContainer {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    user-select: none;
+    font-family: Impact, Charcoal, sans-serif;
+    z-index: 50;
+  }
+
+  /* Circle dropdown button with subtle border */
+  #dropdownButton {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #444;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    padding: 0;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+  }
+  #dropdownButton:hover {
+    border-color: var(--color-primary);
+  }
+  body.dark #dropdownButton {
+    border-color: #ddd;
+  }
+  body.dark #dropdownButton:hover {
+    border-color: var(--color-primary);
+  }
+  #dropdownButton:focus {
+    outline: none;
+    box-shadow: 0 0 8px var(--color-primary);
+  }
+
+  /* Single crisp hamburger icon SVG */
+  #dropdownButton svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: #444;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  body.dark #dropdownButton svg {
+    stroke: #ddd;
+  }
+  #dropdownButton.open svg {
+    stroke: var(--color-primary);
+  }
+
+
+  #dropdownContent {
+    position: absolute;
+    top: 50px;
+    left: 0; /* align left with button */
+    background: transparent;
+    border-radius: 0 0 8px 8px;
+    padding: 4px 4px 2px;
+    opacity: 0;
+    visibility: hidden;
+    transform-origin: top left;
+    transform: scaleY(0);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    display: flex;
+    flex-direction: column;
+    min-width: 56px;
+    user-select: none;
+    gap: 6px;
+    z-index: 100;
+  }
+  #dropdownContent.show {
+    opacity: 1;
+    visibility: visible;
+    transform: scaleY(1);
+  }
+
+  #darkModeToggle, #shareBtn, #secretBtn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 6px 0;
+    font-size: 0;
+    user-select: none;
+    color: #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    transition: color 0.3s;
+  }
+  #darkModeToggle:hover, #shareBtn:hover, #secretBtn:hover {
+    color: var(--color-primary);
+  }
+  body.dark #darkModeToggle, body.dark #shareBtn, body.dark #secretBtn {
+    color: #aaa;
+  }
+  body.dark #darkModeToggle:hover, body.dark #shareBtn:hover, body.dark #secretBtn:hover {
+    color: var(--color-primary);
+  }
+
+  .moon-icon, .share-icon, .smiley-icon {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+    display: block;
+  }
+
+  #gameContainer {
+    padding: 0 12px 12px;
+    box-sizing: border-box;
+    border: 5px solid #333; /* increased border thickness for player ball */
+    border-radius: 12px;
+    background: var(--color-menu-bg-light);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transition: background-color 0.4s, border-color 0.4s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2px;
+    max-width: 100vw;
+    max-height: calc(100vh - 130px);
+    position: relative;
+  }
+  body.dark #gameContainer {
+    background: var(--color-menu-bg-dark);
+    border-color: #666;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+  }
+
+  /* Red tint overlay for secret mode */
+  #redTintOverlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    background: rgba(255, 0, 0, 0.15);
+    border-radius: 12px;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  canvas {
+    display: block;
+    box-sizing: border-box;
+    border-radius: 10px;
+    border: 5px solid #666; /* increased for player ball border to match opponent */
+    background: #fff;
+    width: 100%;
+    max-width: 100vw;
+    height: auto;
+    max-height: calc(100vh - 200px);
+    user-select: none;
+    font-family: Impact, Charcoal, sans-serif;
+    transition: background-color 0.4s, border-color 0.4s;
+    margin: 0;
+    position: relative;
+    z-index: 20;
+  }
+  body.dark canvas {
+    background: #222;
+    border-color: #888;
+  }
+
+  #ui {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+    font-family: Impact, Charcoal, sans-serif;
+    color: var(--color-text-light);
+    user-select: none;
+    width: 100%;
+    position: relative;
+    z-index: 20;
+  }
+  body.dark #ui {
+    color: var(--color-text-dark);
+  }
+  #healthContainer {
+    width: 180px;
+  }
+  #healthBarBg {
+    width: 100%;
+    height: 20px;
+    background: #555;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  #healthBarFill {
+    height: 100%;
+    width: 100%;
+    background: #4CAF50;
+    transition: width 0.3s ease;
+  }
+  #healthText {
+    font-weight: bold;
+    margin-top: 4px;
+  }
+  #timerText {
+    font-weight: bold;
+    font-size: 20px;
+    width: 180px;
+    text-align: center;
+  }
+  #btnMainMenu {
+    cursor: pointer;
+    padding: 6px 18px;
+    font-size: 16px;
+    border: none;
+    background-color: var(--color-primary);
+    color: white;
+    border-radius: 5px;
+    user-select: none;
+    transition: background-color 0.3s;
+    width: 140px;
+    box-shadow: 0 3px 5px rgb(0 123 255 / 0.4);
+    font-family: Impact, Charcoal, sans-serif;
+    margin-left: auto;
+    position: relative;
+    z-index: 20;
+  }
+  #btnMainMenu:hover {
+    background-color: #0056b3;
+  }
+
+  #gameOverOverlay, #fadeOverlay, #passwordErrorOverlay {
+    position: absolute;
+    top:0; left:0; width: 100%; height:100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    font-size: 28px;
+    z-index: 1000;
+    pointer-events: auto;
+    font-family: Impact, Charcoal, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+  #flagImage {
+    max-width: 200px;
+    max-height: 120px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 5px black);
+  }
+
+  #fadeOverlay p {
+    font-size: 36px;
+    margin: 0 0 24px;
+  }
+  #fadeOverlay button {
+    font-family: Impact, Charcoal, sans-serif;
+    font-size: 18px;
+    padding: 10px 26px;
+    border-radius: 8px;
+    border: none;
+    margin: 0 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  #fadeOverlay button#fadeYes {
+    background-color: #4caf50;
+    color: white;
+  }
+  #fadeOverlay button#fadeYes:hover {
+    background-color: #388e3c;
+  }
+  #fadeOverlay button#fadeNo {
+    background-color: #f44336;
+    color: white;
+  }
+  #fadeOverlay button#fadeNo:hover {
+    background-color: #aa2e25;
+  }
+
+  /* Password error overlay style */
+  #passwordErrorOverlay p {
+    font-size: 64px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+  <div id="mainMenu" tabindex="0">
+    <div id="titleRow">
+      <h1>Chappal VS AK-47</h1>
+      <div id="dropdownContainer">
+        <button id="dropdownButton" aria-haspopup="true" aria-expanded="false" aria-controls="dropdownContent" title="Menu" aria-label="Open menu" type="button" >
+          <!-- Single Hamburger icon SVG -->
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" >
+            <line x1="3" y1="7" x2="21" y2="7" stroke-width="3" stroke-linecap="round" stroke="#444"></line>
+            <line x1="3" y1="12" x2="21" y2="12" stroke-width="3" stroke-linecap="round" stroke="#444"></line>
+            <line x1="3" y1="17" x2="21" y2="17" stroke-width="3" stroke-linecap="round" stroke="#444"></line>
+          </svg>
+        </button>
+        <div id="dropdownContent" role="menu" aria-hidden="true" tabindex="-1">
+          <button id="darkModeToggle" aria-label="Toggle dark mode" role="menuitem" title="Toggle Dark Mode" type="button">
+            <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14.53 2.71a9 9 0 1 0 7.76 7.77 7 7 0 0 1-7.76-7.77z" />
+            </svg>
+          </button>
+          <button id="shareBtn" role="menuitem" title="Share Game" aria-label="Share Game" type="button">
+            <svg class="share-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 20h14v-2H5v2zm7-18l-5 5h3v6h4v-6h3l-5-5z"/>
+            </svg>
+          </button>
+          <button id="secretBtn" role="menuitem" title="Secret Mode" aria-label="Secret Mode" type="button">
+            <svg class="smiley-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="8" cy="10" r="1.5" fill="currentColor"/>
+              <circle cx="16" cy="10" r="1.5" fill="currentColor"/>
+              <path d="M8 16c1.333 1.333 4.667 1.333 6 0" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <button class="mode-button" data-mode="easy">Easy Mode</button>
+    <button class="mode-button" data-mode="medium">Medium Mode</button>
+    <button class="mode-button" data-mode="hard">Hard Mode</button>
+    <button class="mode-button" data-mode="survival">Survival Mode</button>
+  </div>
+
+  <div id="footerText">Created by 12.2.twelve</div>
+
+  <div id="gameContainer" style="display:none;">
+    <div id="redTintOverlay"></div>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div id="ui">
+      <div id="healthContainer">
+        <div id="healthBarBg">
+          <div id="healthBarFill"></div>
+        </div>
+        <div id="healthText">Health: 100 / 100</div>
+      </div>
+      <div id="timerText">Time Left: 45 s</div>
+      <button id="btnMainMenu">Main Menu</button>
+    </div>
+    <div id="gameOverOverlay" style="display:flex; flex-direction:column; align-items:center; justify-content:center; display:none;">
+      <img id="flagImage" src="" alt="Flag" />
+      <div id="gameOverText"></div>
+    </div>
+  </div>
+
+  <!-- Fade overlay for secret acceptance -->
+  <div id="fadeOverlay" role="dialog" aria-modal="true" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); color:white; text-align:center; font-family: Impact, Charcoal, sans-serif; z-index: 1500; flex-direction: column; justify-content: center; align-items: center;">
+    <p id="fadeMessage">So, you are the chosen one</p>
+    <div id="fadeButtons" style="display:none;">
+      <button id="fadeYes" type="button">yes</button>
+      <button id="fadeNo" type="button">no</button>
+    </div>
+  </div>
+
+  <!-- Password error flashing overlay -->
+  <div id="passwordErrorOverlay">
+    <p>Wrong password dumbass</p>
+  </div>
+
+<script>
+(() => {
+  const bodyEl = document.body;
+  const mainMenu = document.getElementById('mainMenu');
+  const gameContainer = document.getElementById('gameContainer');
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const healthBarFill = document.getElementById('healthBarFill');
+  const healthText = document.getElementById('healthText');
+  const timerText = document.getElementById('timerText');
+  const btnMainMenu = document.getElementById('btnMainMenu');
+  const gameOverOverlay = document.getElementById('gameOverOverlay');
+  const gameOverText = document.getElementById('gameOverText');
+  const flagImage = document.getElementById('flagImage');
+  const redTintOverlay = document.getElementById('redTintOverlay');
+
+  const dropdownButton = document.getElementById('dropdownButton');
+  const dropdownContent = document.getElementById('dropdownContent');
+  const darkModeToggle = document.getElementById('darkModeToggle');
+  const shareBtn = document.getElementById('shareBtn');
+  const secretBtn = document.getElementById('secretBtn');
+
+  const fadeOverlay = document.getElementById('fadeOverlay');
+  const fadeMessage = document.getElementById('fadeMessage');
+  const fadeButtons = document.getElementById('fadeButtons');
+  const fadeYes = document.getElementById('fadeYes');
+  const fadeNo = document.getElementById('fadeNo');
+
+  const passwordErrorOverlay = document.getElementById('passwordErrorOverlay');
+
+  let darkMode = false;
+
+  dropdownButton.addEventListener('click', () => {
+    const isOpen = dropdownContent.classList.toggle('show');
+    dropdownButton.setAttribute('aria-expanded', isOpen.toString());
+    dropdownButton.classList.toggle('open', isOpen);
+    if (isOpen) {
+      dropdownContent.focus();
+    }
+  });
+
+  darkModeToggle.addEventListener('click', () => {
+    darkMode = !darkMode;
+    if (darkMode) {
+      bodyEl.classList.add('dark');
+    } else {
+      bodyEl.classList.remove('dark');
+    }
+  });
+
+  shareBtn.addEventListener('click', () => {
+    alert('Sharing actual game file is not possible via clipboard.\nYou can share the URL or save the page manually.');
+    dropdownContent.classList.remove('show');
+    dropdownButton.setAttribute('aria-expanded', 'false');
+    dropdownButton.classList.remove('open');
+  });
+
+  secretBtn.addEventListener('click', () => {
+    dropdownContent.classList.remove('show');
+    dropdownButton.setAttribute('aria-expanded', 'false');
+    dropdownButton.classList.remove('open');
+
+    const pw = prompt("Enter password:");
+    if (pw !== "PEEPEE") {
+      flashPasswordError();
+    } else {
+      startSecretModeIntro();
+    }
+  });
+
+  let passwordErrorTimeout;
+  function flashPasswordError() {
+    passwordErrorOverlay.style.display = 'flex';
+    clearTimeout(passwordErrorTimeout);
+    passwordErrorTimeout = setTimeout(() => {
+      passwordErrorOverlay.style.display = 'none';
+    }, 2000);
+  }
+
+  function startSecretModeIntro() {
+    fadeOverlay.style.display = 'flex';
+    fadeMessage.textContent = "So, you are the chosen one";
+    fadeButtons.style.display = 'none';
+    fadeMessage.style.opacity = '1';
+    setTimeout(() => {
+      fadeMessage.style.opacity = '0';
+      setTimeout(() => {
+        fadeMessage.textContent = "so are you ready?";
+        fadeMessage.style.opacity = '1';
+        fadeButtons.style.display = 'flex';
+      }, 600);
+    }, 2000);
+  }
+
+  fadeNo.onclick = () => {
+    fadeOverlay.style.display = 'none';
+    flashPussyLol();
+  };
+
+  fadeYes.onclick = () => {
+    fadeOverlay.style.display = 'none';
+    startSecretGame();
+  };
+
+  let lastMouseMoveTime = Date.now();
+  let inactivityIntervalId = null;
+
+  let playerRadius;
+  let computerRadius;
+  let computerBaseSpeed;
+  let playerPos;
+  let computerPos;
+  let computerSpeed;
+  let computerDir;
+  let computerVelocity;
+  let playerHealth;
+  let timeLeft;
+  let gameOver;
+  let speedIncreaseTimer;
+  let isSurvivalMode = false;
+  let survivalElapsed = 0;
+  let lastFrameTime = 0;
+  let secretModeActive = false;
+
+  const width = canvas.width;
+  const height = canvas.height;
+  const playerRadiusBase = 20;
+  const computerRadiusOriginal = playerRadiusBase * 1.2;
+  const speedIncreaseFactor = 1.25;
+  const speedIncreaseInterval = 5000;
+  const maxHealth = 100;
+
+  const indianFlagURL = 'https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg';
+  const americanFlagURL = 'https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg';
+  const russianFlagURL = 'https://upload.wikimedia.org/wikipedia/en/f/f3/Flag_of_Russia.svg';
+
+  const indianFlagImg = new Image();
+  indianFlagImg.crossOrigin = "anonymous";
+  indianFlagImg.src = indianFlagURL;
+
+  const americanFlagImg = new Image();
+  americanFlagImg.crossOrigin = "anonymous";
+  americanFlagImg.src = americanFlagURL;
+
+  const russianFlagImg = new Image();
+  russianFlagImg.crossOrigin = "anonymous";
+  russianFlagImg.src = russianFlagURL;
+
+  function normalizeVector(v) {
+    const length = Math.hypot(v.x, v.y);
+    return length === 0 ? { x: 0, y: 0 } : { x: v.x / length, y: v.y / length };
+  }
+
+  function clamp(num, min, max) {
+    return num < min ? min : num > max ? max : num;
+  }
+
+  function distance(p1, p2) {
+    return Math.hypot(p1.x - p2.x, p1.y - p2.y);
+  }
+
+  function addRandomnessToVelocity() {
+    const maxAngle = 15 * (Math.PI / 180);
+    const currentAngle = Math.atan2(computerVelocity.y, computerVelocity.x);
+    const randomAngle = (Math.random() * 2 * maxAngle) - maxAngle;
+    const speed = Math.hypot(computerVelocity.x, computerVelocity.y);
+    const newAngle = currentAngle + randomAngle;
+
+    computerVelocity.x = Math.cos(newAngle) * speed;
+    computerVelocity.y = Math.sin(newAngle) * speed;
+  }
+
+  function resetGame(modeSettings) {
+    playerRadius = playerRadiusBase;
+    computerRadius = computerRadiusOriginal * 2.5;
+    computerBaseSpeed = 150;
+
+    playerPos = { x: width / 4, y: height / 2 };
+    computerPos = { x: (3 * width) / 4, y: height / 2 };
+
+    isSurvivalMode = modeSettings.survival;
+    secretModeActive = false;
+
+    computerSpeed = computerBaseSpeed * modeSettings.speedMultiplier;
+
+    computerDir = normalizeVector({ x: -1, y: 1 });
+    computerVelocity = {
+      x: computerDir.x * computerSpeed,
+      y: computerDir.y * computerSpeed,
+    };
+
+    playerHealth = maxHealth;
+
+    if (isSurvivalMode) {
+      timeLeft = 0;
+      survivalElapsed = 0;
+      timerText.textContent = "Time Survived: 0.0 s";
+    } else {
+      timeLeft = modeSettings.duration;
+      timerText.textContent = `Time Left: ${Math.ceil(timeLeft)} s`;
+    }
+
+    updateHealthUI();
+
+    speedIncreaseTimer = 0;
+    lastFrameTime = 0;
+    gameOver = false;
+
+    gameOverOverlay.style.display = 'none';
+    redTintOverlay.style.opacity = '0';
+
+    lastMouseMoveTime = Date.now();
+    if (inactivityIntervalId) clearInterval(inactivityIntervalId);
+    inactivityIntervalId = setInterval(() => {
+      if (gameOver) {
+        clearInterval(inactivityIntervalId);
+        inactivityIntervalId = null;
+        return;
+      }
+      const now = Date.now();
+      if (now - lastMouseMoveTime > 1000) {
+        playerHealth -= 1;
+        if (playerHealth < 0) playerHealth = 0;
+        updateHealthUI();
+        if (playerHealth <= 0) {
+          gameOver = true;
+          showGameOver(playerHealth > 0);
+          clearInterval(inactivityIntervalId);
+          inactivityIntervalId = null;
+        }
+      }
+    }, 500);
+  }
+
+  function updateHealthUI() {
+    const percent = (playerHealth / maxHealth) * 100;
+    healthBarFill.style.width = `${percent}%`;
+    healthText.textContent = `Health: ${Math.ceil(playerHealth)} / ${maxHealth}`;
+  }
+
+  function updateTimerUI() {
+    if (isSurvivalMode) {
+      timerText.textContent = `Time Survived: ${survivalElapsed.toFixed(1)} s`;
+    } else {
+      timerText.textContent = `Time Left: ${Math.ceil(timeLeft)} s`;
+    }
+  }
+
+  function showGameOver(playerWon) {
+    if (secretModeActive) {
+      flagImage.src = russianFlagURL;
+      gameOverText.textContent = playerWon ? 'Modi ne gand faadh di' : 'weak bitch';
+    } else {
+      flagImage.src = playerWon ? indianFlagURL : americanFlagURL;
+      gameOverText.textContent = playerWon ? 'Modi ne gand faadh di' : 'you disgrace';
+    }
+    gameOverOverlay.style.display = 'flex';
+
+    setTimeout(() => {
+      stopGameAndShowMenu();
+    }, 3000);
+  }
+
+  function stopGameAndShowMenu() {
+    gameOver = true;
+    gameContainer.style.display = 'none';
+    mainMenu.style.display = 'block';
+    gameOverOverlay.style.display = 'none';
+    redTintOverlay.style.opacity = '0';
+    secretModeActive = false;
+    if (inactivityIntervalId) {
+      clearInterval(inactivityIntervalId);
+      inactivityIntervalId = null;
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+
+    if (indianFlagImg.complete && indianFlagImg.naturalWidth !== 0) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(playerPos.x, playerPos.y, playerRadius, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.drawImage(indianFlagImg, playerPos.x - playerRadius, playerPos.y - playerRadius, playerRadius * 2, playerRadius * 2);
+      ctx.restore();
+    } else {
+      ctx.fillStyle = 'dodgerblue';
+      ctx.beginPath();
+      ctx.arc(playerPos.x, playerPos.y, playerRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    const opponentFlag = secretModeActive ? russianFlagImg : americanFlagImg;
+
+    if (opponentFlag.complete && opponentFlag.naturalWidth !== 0) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(computerPos.x, computerPos.y, computerRadius, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.drawImage(opponentFlag, computerPos.x - computerRadius, computerPos.y - computerRadius, computerRadius * 2, computerRadius * 2);
+      ctx.restore();
+    } else {
+      ctx.fillStyle = 'crimson';
+      ctx.beginPath();
+      ctx.arc(computerPos.x, computerPos.y, computerRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function update(delta) {
+    computerPos.x += computerVelocity.x * delta;
+    computerPos.y += computerVelocity.y * delta;
+
+    if (computerPos.x - computerRadius < 0) {
+      computerPos.x = computerRadius;
+      computerVelocity.x = Math.abs(computerVelocity.x);
+      addRandomnessToVelocity();
+    } else if (computerPos.x + computerRadius > width) {
+      computerPos.x = width - computerRadius;
+      computerVelocity.x = -Math.abs(computerVelocity.x);
+      addRandomnessToVelocity();
+    }
+    if (computerPos.y - computerRadius < 0) {
+      computerPos.y = computerRadius;
+      computerVelocity.y = Math.abs(computerVelocity.y);
+      addRandomnessToVelocity();
+    }
+    if (computerPos.y + computerRadius > height) {
+      computerPos.y = height - computerRadius;
+      computerVelocity.y = -Math.abs(computerVelocity.y);
+      addRandomnessToVelocity();
+    }
+
+    speedIncreaseTimer += delta * 1000;
+    if (speedIncreaseTimer >= speedIncreaseInterval) {
+      speedIncreaseTimer -= speedIncreaseInterval;
+      computerVelocity.x *= speedIncreaseFactor;
+      computerVelocity.y *= speedIncreaseFactor;
+    }
+
+    const dist = distance(playerPos, computerPos);
+    if (dist < playerRadius + computerRadius) {
+      playerHealth -= 10;
+      if (playerHealth < 0) playerHealth = 0;
+      updateHealthUI();
+
+      const nx = (computerPos.x - playerPos.x) / dist;
+      const ny = (computerPos.y - playerPos.y) / dist;
+      const vDotN = computerVelocity.x * nx + computerVelocity.y * ny;
+
+      computerVelocity.x = computerVelocity.x - 2 * vDotN * nx;
+      computerVelocity.y = computerVelocity.y - 2 * vDotN * ny;
+
+      computerPos.x = playerPos.x + nx * (playerRadius + computerRadius);
+      computerPos.y = playerPos.y + ny * (playerRadius + computerRadius);
+    }
+
+    if (isSurvivalMode) {
+      survivalElapsed += delta;
+    } else {
+      timeLeft -= delta;
+      if (timeLeft < 0) timeLeft = 0;
+    }
+    updateTimerUI();
+
+    if (playerHealth <= 0 || (!isSurvivalMode && timeLeft <= 0)) {
+      gameOver = true;
+      showGameOver(playerHealth > 0);
+      if (inactivityIntervalId) clearInterval(inactivityIntervalId);
+    }
+  }
+
+  // Track mouse on whole document, clamp position inside canvas
+  function onDocumentMouseMove(e) {
+    if (gameOverOverlay.style.display === 'flex' || gameContainer.style.display === 'none') return;
+    const rect = canvas.getBoundingClientRect();
+    const clampedX = clamp(e.clientX - rect.left, playerRadius, rect.width - playerRadius);
+    const clampedY = clamp(e.clientY - rect.top, playerRadius, rect.height - playerRadius);
+    playerPos.x = clampedX;
+    playerPos.y = clampedY;
+    lastMouseMoveTime = Date.now();
+  }
+  document.addEventListener('mousemove', onDocumentMouseMove);
+
+  // Hard mode with confirmation
+  mainMenu.querySelectorAll('button[data-mode]').forEach(button => {
+    button.addEventListener('click', e => {
+      const mode = button.getAttribute('data-mode');
+      if (mode === 'hard') {
+        if (confirm('u sure?')) {
+          startGame(mode);
+        } else {
+          flashPussyLol();
+        }
+        return;
+      }
+      startGame(mode);
+    });
+  });
+
+  btnMainMenu.addEventListener('click', () => {
+    stopGameAndShowMenu();
+  });
+
+  let flashTimeout = null;
+  const pussyFlashOverlay = document.createElement('div');
+  pussyFlashOverlay.style.position = 'fixed';
+  pussyFlashOverlay.style.top = '0';
+  pussyFlashOverlay.style.left = '0';
+  pussyFlashOverlay.style.width = '100vw';
+  pussyFlashOverlay.style.height = '100vh';
+  pussyFlashOverlay.style.backgroundColor = '#4CAF50';
+  pussyFlashOverlay.style.color = 'white';
+  pussyFlashOverlay.style.fontFamily = 'Impact, Charcoal, sans-serif';
+  pussyFlashOverlay.style.fontWeight = 'bold';
+  pussyFlashOverlay.style.fontSize = '80px';
+  pussyFlashOverlay.style.display = 'flex';
+  pussyFlashOverlay.style.justifyContent = 'center';
+  pussyFlashOverlay.style.alignItems = 'center';
+  pussyFlashOverlay.style.userSelect = 'none';
+  pussyFlashOverlay.style.zIndex = '9999';
+  pussyFlashOverlay.style.textTransform = 'uppercase';
+  pussyFlashOverlay.style.pointerEvents = 'none';
+  pussyFlashOverlay.textContent = 'pussy lol';
+  pussyFlashOverlay.style.visibility = 'hidden';
+  document.body.appendChild(pussyFlashOverlay);
+
+  function flashPussyLol() {
+    pussyFlashOverlay.style.visibility = 'visible';
+    if (flashTimeout) clearTimeout(flashTimeout);
+    flashTimeout = setTimeout(() => {
+      pussyFlashOverlay.style.visibility = 'hidden';
+    }, 2000);
+  }
+
+  function startGame(mode) {
+    let settings = {duration: 45, speedMultiplier: 1.0, survival: false};
+    switch(mode) {
+      case 'easy':
+        settings.duration = 30;
+        settings.speedMultiplier = 5 * 0.9;
+        settings.survival = false;
+        break;
+      case 'medium':
+        settings.duration = 45;
+        settings.speedMultiplier = 5;
+        settings.survival = false;
+        break;
+      case 'hard':
+        settings.duration = 60;
+        settings.speedMultiplier = 5 * 3.0;
+        settings.survival = false;
+        break;
+      case 'survival':
+        settings.duration = 0;
+        settings.speedMultiplier = 5;
+        settings.survival = true;
+        break;
+    }
+    resetGame(settings);
+    mainMenu.style.display = 'none';
+    gameContainer.style.display = '';
+    lastFrameTime = 0;
+    gameOver = false;
+    redTintOverlay.style.opacity = '0';
+    secretModeActive = false;
+    requestAnimationFrame(gameLoop);
+  }
+
+  function startSecretGame() {
+    // Smaller opponent radius (-20%), faster (+200%), red tint on screen
+    isSurvivalMode = false;
+    secretModeActive = true;
+    playerRadius = playerRadiusBase;
+    computerRadius = computerRadiusOriginal * 2.5 * 0.8;
+    computerBaseSpeed = 150;
+    const secretSpeedMultiplier = 5 * 2.0; // 200% faster
+
+    playerPos = { x: width / 4, y: height / 2 };
+    computerPos = { x: (3 * width) / 4, y: height / 2 };
+
+    computerSpeed = computerBaseSpeed * secretSpeedMultiplier;
+
+    computerDir = normalizeVector({ x: -1, y: 1 });
+    computerVelocity = {
+      x: computerDir.x * computerSpeed,
+      y: computerDir.y * computerSpeed,
+    };
+
+    playerHealth = maxHealth;
+    timeLeft = 60;
+    isSurvivalMode = false;
+
+    updateHealthUI();
+    timerText.textContent = `Time Left: ${Math.ceil(timeLeft)} s`;
+
+    speedIncreaseTimer = 0;
+    lastFrameTime = 0;
+    gameOver = false;
+
+    gameOverOverlay.style.display = 'none';
+
+    lastMouseMoveTime = Date.now();
+    if (inactivityIntervalId) clearInterval(inactivityIntervalId);
+    inactivityIntervalId = setInterval(() => {
+      if (gameOver) {
+        clearInterval(inactivityIntervalId);
+        inactivityIntervalId = null;
+        return;
+      }
+      const now = Date.now();
+      if (now - lastMouseMoveTime > 1000) {
+        playerHealth -= 1;
+        if (playerHealth < 0) playerHealth = 0;
+        updateHealthUI();
+        if (playerHealth <= 0) {
+          gameOver = true;
+          showGameOver(playerHealth > 0);
+          clearInterval(inactivityIntervalId);
+          inactivityIntervalId = null;
+        }
+      }
+    }, 500);
+
+    redTintOverlay.style.opacity = '1';
+
+    mainMenu.style.display = 'none';
+    gameContainer.style.display = 'flex';
+    lastFrameTime = 0;
+    requestAnimationFrame(gameLoop);
+  }
+
+  function gameLoop(timestamp = 0) {
+    if (!lastFrameTime) lastFrameTime = timestamp;
+    const delta = (timestamp - lastFrameTime) / 1000;
+    lastFrameTime = timestamp;
+    if (!gameOver) {
+      update(delta);
+      draw();
+    }
+    requestAnimationFrame(gameLoop);
+  }
+
+})();
+</script>
+</body>
+</html>
